@@ -9,8 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
-    <!-- Early 2000s / Brutalist Fonts -->
+    <!-- Y2K / Brutalist Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 
     <style>
@@ -22,60 +23,73 @@
         }
 
         body {
-            background-color: #000000;
-            color: #ffffff;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
             cursor: crosshair;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Y2K Grid Background Overlay */
+        /* Light Mode Variables/Overrides */
+        body.light-mode {
+            background-color: #e8e8e8;
+            color: #000;
+        }
+
         .grid-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
             z-index: 0;
             pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
-        #three-container {
-            position: absolute;
+        body.light-mode .grid-overlay {
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        }
+
+        #three-container, #p5-container {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-        }
-
-        #p5-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
             pointer-events: none; 
         }
 
-        #ui-layer {
+        #three-container { z-index: 1; }
+        #p5-container { z-index: 2; }
+
+        /* Scrollable Content Wrapper */
+        #scroll-content {
             position: relative;
             z-index: 3;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            height: 100%;
-            padding: 2rem;
             pointer-events: none; 
         }
 
-        header, footer, .cta-btn, .nav-links a {
+        /* Make interactive elements clickable */
+        header, .theme-btn, .nav-links a, .wiki-box, .gallery-item {
             pointer-events: auto; 
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
         }
 
         header {
@@ -86,24 +100,50 @@
             padding-bottom: 1rem;
         }
 
+        body.light-mode header { border-bottom: 1px solid rgba(0,0,0,0.2); }
+
+        /* Y2K 3D Title */
         .brand-name {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: #fff;
-            text-shadow: 2px 2px 0px #ff003c, -2px -2px 0px #00f0ff; /* Glitch effect */
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            text-shadow: 
+                1px 1px 0 #555,
+                2px 2px 0 #444,
+                3px 3px 0 #333,
+                4px 4px 0 #222,
+                5px 5px 0 #111;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .brand-name {
+            color: #000;
+            text-shadow: 
+                1px 1px 0 #ccc,
+                2px 2px 0 #bbb,
+                3px 3px 0 #aaa,
+                4px 4px 0 #999,
+                5px 5px 0 #888;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             font-size: 0.8rem;
             text-transform: uppercase;
         }
 
         .nav-links a {
-            color: #ffffff;
+            color: inherit;
             text-decoration: none;
             border: 1px solid transparent;
             padding: 5px 10px;
@@ -111,11 +151,22 @@
         }
 
         .nav-links a:hover {
-            border: 1px solid #fff;
-            background: rgba(255,255,255,0.1);
+            border: 1px solid currentColor;
+            background: rgba(128,128,128,0.2);
         }
 
-        main {
+        .theme-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .theme-btn:hover { transform: scale(1.2); }
+
+        .hero-center {
             flex: 1;
             display: flex;
             align-items: center;
@@ -133,55 +184,134 @@
             line-height: 0.9;
             color: transparent;
             -webkit-text-stroke: 1px #fff;
-            opacity: 0;
         }
 
-        .badge {
-            margin-top: 2rem;
-            padding: 0.5rem 1rem;
-            border: 1px solid #fff;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            background: #000;
-            opacity: 0;
-        }
+        body.light-mode h1 { -webkit-text-stroke: 1px #000; }
 
-        footer {
-            display: flex;
-            justify-content: space-between;
+        .scroll-indicator {
+            margin-top: 3rem;
             font-size: 0.7rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 1rem;
             text-transform: uppercase;
-            opacity: 0;
+            animation: pulse 2s infinite;
         }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(10px); }
+        }
+
+        /* Wikipedia / Y2K Info Section */
+        .info-section {
+            min-height: 100vh;
+            padding: 5rem 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .wiki-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #fff;
+            padding: 2rem;
+            width: 50%;
+            backdrop-filter: blur(5px);
+        }
+
+        body.light-mode .wiki-box {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #000;
+        }
+
+        .wiki-title {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 1.5rem;
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .wiki-text {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .wiki-link {
+            color: #00f0ff;
+            text-decoration: underline;
+        }
+
+        body.light-mode .wiki-link { color: #0000ee; }
+
+        .wiki-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .wiki-table th, .wiki-table td {
+            border: 1px solid currentColor;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        /* Big Image Gallery Section */
+        .gallery-section {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5rem;
+            padding-bottom: 10rem;
+        }
+
+        .gallery-item {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+
+        body.light-mode .gallery-item { background: #ccc; }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            transition: opacity 0.5s;
+            mix-blend-mode: luminosity;
+        }
+
+        .gallery-item:hover img { opacity: 1; mix-blend-mode: normal; }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background: currentColor;
+            color: #000;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        body.light-mode .gallery-caption { color: #fff; }
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
-            #ui-layer {
-                padding: 1rem;
-            }
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center;
-                border-bottom: none;
-            }
-            .nav-links {
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-                font-size: 0.7rem;
-            }
-            h1 {
-                font-size: 3rem;
-                -webkit-text-stroke: 0.5px #fff;
-            }
-            footer {
-                flex-direction: column;
-                gap: 0.5rem;
-                text-align: center;
-            }
+            .hero { padding: 1rem; }
+            .header-controls { flex-direction: column; gap: 1rem; align-items: flex-end; }
+            .nav-links { gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; font-size: 0.7rem; }
+            .info-section { flex-direction: column; padding: 2rem 1rem; }
+            .wiki-box { width: 100%; }
+            .gallery-item { height: 50vh; }
         }
     </style>
 </head>
@@ -191,31 +321,99 @@
     <div id="three-container"></div>
     <div id="p5-container"></div>
 
-    <div id="ui-layer">
-        <header id="nav-header">
-            <div class="brand-name">INVOXEA</div>
-            <nav class="nav-links">
-                <a href="#">[ Collections ]</a>
-                <a href="#">[ Digitals ]</a>
-                <a href="#">[ Events ]</a>
-                <a href="#">[ Vault ]</a>
-            </nav>
-        </header>
+    <div id="scroll-content">
+        <!-- Section 1: Hero -->
+        <section class="hero">
+            <header id="nav-header">
+                <div class="brand-name">INVOXEA</div>
+                <div class="header-controls">
+                    <nav class="nav-links">
+                        <a href="#">[ Collections ]</a>
+                        <a href="#">[ Digitals ]</a>
+                        <a href="#">[ Events ]</a>
+                        <a href="#">[ Vault ]</a>
+                    </nav>
+                    <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">☼</button>
+                </div>
+            </header>
 
-        <main>
-            <h1 id="main-title">SYS<br>CORE</h1>
-            <div class="badge" id="sub-title">VER 2.0.26 // ONLINE</div>
-        </main>
+            <div class="hero-center">
+                <h1 id="main-title">SYS<br>CORE</h1>
+                <div class="scroll-indicator">[ SCROLL TO INITIALIZE ]</div>
+            </div>
+        </section>
 
-        <footer id="footer">
-            <span>FILE: INVOX_ROOT_DIR</span>
-            <span id="coord-display">X: 000 Y: 000</span>
-        </footer>
+        <!-- Section 2: Y2K / Wikipedia Dense Info -->
+        <section class="info-section">
+            <div class="wiki-box">
+                <div class="wiki-title">INVOXEA_MANIFESTO.TXT</div>
+                <p class="wiki-text">
+                    Founded at the intersection of spatial web logic and physical garment construction. Invoxea operates as a dual-entity platform, merging high-end textile collections with <a href="#" class="wiki-link">immutable digital works</a>.
+                </p>
+                <p class="wiki-text">
+                    The brand logic relies on continuous structural iteration, taking aesthetic cues from early network architecture and brutalist spatial design.
+                </p>
+                <table class="wiki-table">
+                    <tr>
+                        <th>PARAMETER</th>
+                        <th>VALUE</th>
+                    </tr>
+                    <tr>
+                        <td>ESTABLISHED</td>
+                        <td>2026</td>
+                    </tr>
+                    <tr>
+                        <td>PROTOCOL</td>
+                        <td>PHYSICAL / DIGITAL / SPATIAL</td>
+                    </tr>
+                    <tr>
+                        <td>HOST</td>
+                        <td>MELBOURNE_SERVER_01</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="wiki-box" style="margin-top: 10vh;">
+                <div class="wiki-title">SYSTEM_LOGS</div>
+                <p class="wiki-text">> INITIALIZING RUNWAY SCENE...</p>
+                <p class="wiki-text">> CONNECTING TO DATABASE...</p>
+                <p class="wiki-text">> LOADING 3D ASSETS: OK</p>
+                <p class="wiki-text">> WAITING FOR USER INPUT</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Immersive Scroll Gallery -->
+        <section class="gallery-section">
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop" alt="Digital Artifact">
+                <div class="gallery-caption">OBJ_01 // DIGITAL THREADS</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000&auto=format&fit=crop" alt="Runway">
+                <div class="gallery-caption">OBJ_02 // SYSTEM RUNWAY</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2000&auto=format&fit=crop" alt="Event space">
+                <div class="gallery-caption">OBJ_03 // CLUB NIGHT PROTOCOL</div>
+            </div>
+        </section>
     </div>
 
     <script>
-        // --- 1. THREE.JS 3D ENVIRONMENT (Chrome / Brutal 3D) ---
-        let artifact;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. LIGHT/DARK MODE TOGGLE ---
+        const themeToggle = document.getElementById('theme-toggle');
+        let isLightMode = false;
+
+        themeToggle.addEventListener('click', () => {
+            isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode');
+            themeToggle.innerText = isLightMode ? '☾' : '☼';
+        });
+
+        // --- 2. THREE.JS 3D ENVIRONMENT ---
+        let artifact, wireframe, pointLight1, pointLight2;
         const initThreeJS = () => {
             const container = document.getElementById('three-container');
             const scene = new THREE.Scene();
@@ -225,53 +423,69 @@
 
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Perf optimization
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Chrome Torus Knot
             const geometry = new THREE.TorusKnotGeometry(1.5, 0.4, 128, 32);
             const material = new THREE.MeshStandardMaterial({ 
                 color: 0xaaaaaa, 
                 roughness: 0.1,
                 metalness: 1.0,
-                wireframe: false
             });
             
             artifact = new THREE.Mesh(geometry, material);
             scene.add(artifact);
 
-            // Add an inner wireframe clone for the edgy tech look
-            const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.1 });
-            const wireframe = new THREE.Mesh(geometry, wireMaterial);
+            const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 });
+            wireframe = new THREE.Mesh(geometry, wireMaterial);
             wireframe.scale.set(1.02, 1.02, 1.02);
             artifact.add(wireframe);
 
-            // Harsh Lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
             
-            const pointLight1 = new THREE.PointLight(0xff003c, 5, 50); // Neon Pink/Red hit
+            pointLight1 = new THREE.PointLight(0xff003c, 5, 50); 
             pointLight1.position.set(5, 5, 5);
             scene.add(pointLight1);
 
-            const pointLight2 = new THREE.PointLight(0x00f0ff, 5, 50); // Cyan hit
+            pointLight2 = new THREE.PointLight(0x00f0ff, 5, 50); 
             pointLight2.position.set(-5, -5, 2);
             scene.add(pointLight2);
 
-            // Adjust scale for mobile
             if (window.innerWidth < 768) {
                 artifact.scale.set(0.6, 0.6, 0.6);
             }
+
+            // Sync 3D object rotation/position to scroll depth
+            ScrollTrigger.create({
+                trigger: "#scroll-content",
+                start: "top top",
+                end: "bottom bottom",
+                onUpdate: (self) => {
+                    gsap.to(artifact.rotation, {
+                        z: self.progress * Math.PI * 4,
+                        duration: 0.5,
+                        overwrite: "auto"
+                    });
+                    gsap.to(artifact.position, {
+                        y: self.progress * 2, // Moves slightly up as you scroll down
+                        duration: 0.5,
+                        overwrite: "auto"
+                    });
+                }
+            });
 
             const clock = new THREE.Clock();
             const animate = () => {
                 requestAnimationFrame(animate);
                 const time = clock.getElapsedTime();
                 
-                // Erratic, mechanical rotation
+                // Base idle animation
                 artifact.rotation.x += Math.sin(time) * 0.005;
                 artifact.rotation.y += 0.01;
-                artifact.rotation.z = Math.cos(time * 0.5) * 0.2;
+
+                // Adjust wireframe color based on theme
+                wireMaterial.color.setHex(isLightMode ? 0x000000 : 0xffffff);
 
                 renderer.render(scene, camera);
             };
@@ -281,16 +495,11 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                
-                if (window.innerWidth < 768) {
-                    artifact.scale.set(0.6, 0.6, 0.6);
-                } else {
-                    artifact.scale.set(1, 1, 1);
-                }
+                artifact.scale.setScalar(window.innerWidth < 768 ? 0.6 : 1);
             });
         };
 
-        // --- 2. P5.JS INTERACTIVE HUD (Crosshairs & Glitch Trails) ---
+        // --- 3. P5.JS INTERACTIVE HUD ---
         const initP5 = () => {
             new p5((p) => {
                 let trail = [];
@@ -298,7 +507,7 @@
                 p.setup = () => {
                     let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
                     canvas.parent('p5-container');
-                    p.noCursor(); // Hide default cursor over canvas
+                    p.noCursor(); 
                 };
 
                 p.draw = () => {
@@ -306,18 +515,14 @@
                     
                     let mx = p.mouseX || p.width / 2;
                     let my = p.mouseY || p.height / 2;
+                    let strokeColor = isLightMode ? p.color(0, 50) : p.color(255, 50);
+                    let solidColor = isLightMode ? 0 : 255;
 
-                    // Update UI Coordinates
-                    if (p.frameCount % 5 === 0) {
-                        document.getElementById('coord-display').innerText = `X: ${Math.round(mx)} Y: ${Math.round(my)}`;
-                    }
-
-                    // Draw trail
                     trail.push({x: mx, y: my});
                     if (trail.length > 15) trail.shift();
 
                     p.noFill();
-                    p.stroke(255, 50);
+                    p.stroke(strokeColor);
                     p.strokeWeight(1);
                     p.beginShape();
                     for (let i = 0; i < trail.length; i++) {
@@ -325,20 +530,17 @@
                     }
                     p.endShape();
 
-                    // HUD Crosshair
-                    p.stroke(255);
+                    p.stroke(solidColor);
                     p.strokeWeight(1);
                     p.line(mx - 20, my, mx - 5, my);
                     p.line(mx + 5, my, mx + 20, my);
                     p.line(mx, my - 20, mx, my - 5);
                     p.line(mx, my + 5, mx, my + 20);
                     
-                    // Center dot
-                    p.fill(255);
+                    p.fill(solidColor);
                     p.rect(mx - 1, my - 1, 2, 2);
                 };
 
-                // Add erratic spin to 3D object on click/touch
                 p.mousePressed = () => {
                     if(artifact) {
                         gsap.to(artifact.rotation, {
@@ -356,28 +558,18 @@
             });
         };
 
-        // --- 3. GSAP BRUTALIST ANIMATIONS ---
+        // --- 4. GSAP INITIAL ANIMATIONS ---
         const initAnimations = () => {
-            // Glitchy fade in
-            gsap.fromTo("#nav-header", 
-                { opacity: 0, y: -20 }, 
-                { opacity: 1, y: 0, duration: 1, ease: "steps(5)" }
-            );
+            gsap.fromTo("#nav-header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "steps(5)" });
+            gsap.fromTo("#main-title", { opacity: 0, scale: 0.9, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.5, delay: 0.2, ease: "power3.out" });
             
-            gsap.fromTo("#main-title", 
-                { opacity: 0, scale: 0.9, filter: "blur(10px)" }, 
-                { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.5, delay: 0.2, ease: "power3.out" }
-            );
-
-            gsap.fromTo("#sub-title", 
-                { opacity: 0, x: -20 }, 
-                { opacity: 1, x: 0, duration: 0.5, delay: 1, ease: "steps(3)" }
-            );
-
-            gsap.fromTo("#footer", 
-                { opacity: 0 }, 
-                { opacity: 1, duration: 1, delay: 1.2, ease: "power1.inOut" }
-            );
+            // Animate wiki boxes on scroll
+            gsap.utils.toArray('.wiki-box').forEach(box => {
+                gsap.fromTo(box, 
+                    { opacity: 0, x: -50 }, 
+                    { scrollTrigger: { trigger: box, start: "top 80%" }, opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }
+                );
+            });
         };
 
         window.onload = () => {
