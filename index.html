@@ -2,32 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INVOXEA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INVOXEA // SYSTEM</title>
     
-    <!-- Load required libraries via CDN -->
+    <!-- Load required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- Early 2000s / Brutalist Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS Reset & Minimalist Pulse Styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Space Mono', monospace;
         }
 
         body {
-            background-color: #050505;
+            background-color: #000000;
             color: #ffffff;
             overflow: hidden;
             width: 100vw;
             height: 100vh;
+            cursor: crosshair;
         }
 
-        /* Layering system */
+        /* Y2K Grid Background Overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         #three-container {
             position: absolute;
             top: 0;
@@ -44,7 +61,7 @@
             width: 100%;
             height: 100%;
             z-index: 2;
-            pointer-events: none; /* Lets clicks pass through to UI */
+            pointer-events: none; 
         }
 
         #ui-layer {
@@ -53,44 +70,49 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            padding: 2.5rem;
-            pointer-events: none; /* Wrapper allows clicks to pass */
+            padding: 2rem;
+            pointer-events: none; 
         }
 
-        /* Make UI elements clickable again */
-        header, footer, .cta {
+        header, footer, .cta-btn, .nav-links a {
             pointer-events: auto; 
         }
 
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 1rem;
         }
 
         .brand-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            mix-blend-mode: difference;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: #fff;
+            text-shadow: 2px 2px 0px #ff003c, -2px -2px 0px #00f0ff; /* Glitch effect */
         }
 
-        nav {
+        .nav-links {
             display: flex;
-            gap: 3rem;
-            font-size: 0.75rem;
-            mix-blend-mode: difference;
+            gap: 2rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
         }
 
-        nav a {
+        .nav-links a {
             color: #ffffff;
             text-decoration: none;
-            transition: opacity 0.3s ease;
+            border: 1px solid transparent;
+            padding: 5px 10px;
+            transition: all 0.2s;
         }
 
-        nav a:hover {
-            opacity: 0.5;
+        .nav-links a:hover {
+            border: 1px solid #fff;
+            background: rgba(255,255,255,0.1);
         }
 
         main {
@@ -102,163 +124,230 @@
         }
 
         h1 {
-            font-size: 5rem;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 6vw;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
+            letter-spacing: -0.05em;
             margin: 0;
             text-align: center;
-            mix-blend-mode: difference;
-            font-weight: 300;
-            opacity: 0; /* Handled by GSAP */
-            transform: translateY(20px);
+            line-height: 0.9;
+            color: transparent;
+            -webkit-text-stroke: 1px #fff;
+            opacity: 0;
         }
 
-        p.subtitle {
-            margin-top: 1.5rem;
-            letter-spacing: 0.15em;
-            font-size: 0.8rem;
-            color: #888;
+        .badge {
+            margin-top: 2rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #fff;
+            font-size: 0.75rem;
             text-transform: uppercase;
+            background: #000;
             opacity: 0;
-            transform: translateY(20px);
         }
 
         footer {
             display: flex;
             justify-content: space-between;
-            font-size: 0.65rem;
-            color: #666;
-            letter-spacing: 0.1em;
+            font-size: 0.7rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 1rem;
             text-transform: uppercase;
             opacity: 0;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            #ui-layer {
+                padding: 1rem;
+            }
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+                border-bottom: none;
+            }
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                font-size: 0.7rem;
+            }
+            h1 {
+                font-size: 3rem;
+                -webkit-text-stroke: 0.5px #fff;
+            }
+            footer {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- WebGL Background Layer -->
+    <div class="grid-overlay"></div>
     <div id="three-container"></div>
-
-    <!-- 2D Generative Overlay Layer -->
     <div id="p5-container"></div>
 
-    <!-- User Interface Layer -->
     <div id="ui-layer">
         <header id="nav-header">
             <div class="brand-name">INVOXEA</div>
-            <nav>
-                <a href="#">Collections</a>
-                <a href="#">Digital Works</a>
-                <a href="#">Events</a>
-                <a href="#">Login / Vault</a>
+            <nav class="nav-links">
+                <a href="#">[ Collections ]</a>
+                <a href="#">[ Digitals ]</a>
+                <a href="#">[ Events ]</a>
+                <a href="#">[ Vault ]</a>
             </nav>
         </header>
 
-        <main class="cta">
-            <h1 id="main-title">Enter System</h1>
-            <p class="subtitle" id="sub-title">Physical // Digital // Spatial</p>
+        <main>
+            <h1 id="main-title">SYS<br>CORE</h1>
+            <div class="badge" id="sub-title">VER 2.0.26 // ONLINE</div>
         </main>
 
         <footer id="footer">
-            <span>© 2026 INVOXEA LTD.</span>
-            <span>System Active // Latency: 12ms</span>
+            <span>FILE: INVOX_ROOT_DIR</span>
+            <span id="coord-display">X: 000 Y: 000</span>
         </footer>
     </div>
 
     <script>
-        // --- 1. THREE.JS 3D ENVIRONMENT ---
+        // --- 1. THREE.JS 3D ENVIRONMENT (Chrome / Brutal 3D) ---
+        let artifact;
         const initThreeJS = () => {
             const container = document.getElementById('three-container');
             const scene = new THREE.Scene();
             
-            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.z = 5;
+            const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.z = 6;
 
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Perf optimization
             container.appendChild(renderer.domElement);
 
-            // Create the wireframe artifact
-            const geometry = new THREE.IcosahedronGeometry(1.5, 2);
+            // Chrome Torus Knot
+            const geometry = new THREE.TorusKnotGeometry(1.5, 0.4, 128, 32);
             const material = new THREE.MeshStandardMaterial({ 
-                color: 0xffffff, 
-                wireframe: true,
-                roughness: 0.2,
-                metalness: 0.8
+                color: 0xaaaaaa, 
+                roughness: 0.1,
+                metalness: 1.0,
+                wireframe: false
             });
-            const artifact = new THREE.Mesh(geometry, material);
+            
+            artifact = new THREE.Mesh(geometry, material);
             scene.add(artifact);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-            scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-            dirLight.position.set(5, 5, 5);
-            scene.add(dirLight);
+            // Add an inner wireframe clone for the edgy tech look
+            const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.1 });
+            const wireframe = new THREE.Mesh(geometry, wireMaterial);
+            wireframe.scale.set(1.02, 1.02, 1.02);
+            artifact.add(wireframe);
 
-            // Animation Loop
+            // Harsh Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const pointLight1 = new THREE.PointLight(0xff003c, 5, 50); // Neon Pink/Red hit
+            pointLight1.position.set(5, 5, 5);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0x00f0ff, 5, 50); // Cyan hit
+            pointLight2.position.set(-5, -5, 2);
+            scene.add(pointLight2);
+
+            // Adjust scale for mobile
+            if (window.innerWidth < 768) {
+                artifact.scale.set(0.6, 0.6, 0.6);
+            }
+
             const clock = new THREE.Clock();
             const animate = () => {
                 requestAnimationFrame(animate);
-                const elapsedTime = clock.getElapsedTime();
+                const time = clock.getElapsedTime();
                 
-                // Rotate and float
-                artifact.rotation.x = elapsedTime * 0.15;
-                artifact.rotation.y = elapsedTime * 0.2;
-                artifact.position.y = Math.sin(elapsedTime * 1.5) * 0.2;
+                // Erratic, mechanical rotation
+                artifact.rotation.x += Math.sin(time) * 0.005;
+                artifact.rotation.y += 0.01;
+                artifact.rotation.z = Math.cos(time * 0.5) * 0.2;
 
                 renderer.render(scene, camera);
             };
             animate();
 
-            // Handle Resize
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                if (window.innerWidth < 768) {
+                    artifact.scale.set(0.6, 0.6, 0.6);
+                } else {
+                    artifact.scale.set(1, 1, 1);
+                }
             });
         };
 
-        // --- 2. P5.JS GENERATIVE OVERLAY ---
-        // Using "Instance Mode" to isolate p5 from Three.js and global variables
+        // --- 2. P5.JS INTERACTIVE HUD (Crosshairs & Glitch Trails) ---
         const initP5 = () => {
             new p5((p) => {
-                let particles = [];
+                let trail = [];
 
                 p.setup = () => {
                     let canvas = p.createCanvas(p.windowWidth, p.windowHeight);
                     canvas.parent('p5-container');
-                    
-                    for (let i = 0; i < 40; i++) {
-                        particles.push({
-                            x: p.random(p.width),
-                            y: p.random(p.height),
-                            vx: p.random(-0.5, 0.5),
-                            vy: p.random(-0.5, 0.5)
-                        });
-                    }
+                    p.noCursor(); // Hide default cursor over canvas
                 };
 
                 p.draw = () => {
-                    p.clear(); // Keeps background transparent
-                    p.stroke(255, 35);
-                    p.strokeWeight(1);
+                    p.clear();
                     
-                    particles.forEach((pt) => {
-                        pt.x += pt.vx;
-                        pt.y += pt.vy;
-                        
-                        // Bounce off walls
-                        if (pt.x < 0 || pt.x > p.width) pt.vx *= -1;
-                        if (pt.y < 0 || pt.y > p.height) pt.vy *= -1;
-                        
-                        // Draw lines if close to mouse
-                        let d = p.dist(p.mouseX, p.mouseY, pt.x, pt.y);
-                        if (d < 180) {
-                            p.line(p.mouseX, p.mouseY, pt.x, pt.y);
-                        }
-                    });
+                    let mx = p.mouseX || p.width / 2;
+                    let my = p.mouseY || p.height / 2;
+
+                    // Update UI Coordinates
+                    if (p.frameCount % 5 === 0) {
+                        document.getElementById('coord-display').innerText = `X: ${Math.round(mx)} Y: ${Math.round(my)}`;
+                    }
+
+                    // Draw trail
+                    trail.push({x: mx, y: my});
+                    if (trail.length > 15) trail.shift();
+
+                    p.noFill();
+                    p.stroke(255, 50);
+                    p.strokeWeight(1);
+                    p.beginShape();
+                    for (let i = 0; i < trail.length; i++) {
+                        p.vertex(trail[i].x, trail[i].y);
+                    }
+                    p.endShape();
+
+                    // HUD Crosshair
+                    p.stroke(255);
+                    p.strokeWeight(1);
+                    p.line(mx - 20, my, mx - 5, my);
+                    p.line(mx + 5, my, mx + 20, my);
+                    p.line(mx, my - 20, mx, my - 5);
+                    p.line(mx, my + 5, mx, my + 20);
+                    
+                    // Center dot
+                    p.fill(255);
+                    p.rect(mx - 1, my - 1, 2, 2);
+                };
+
+                // Add erratic spin to 3D object on click/touch
+                p.mousePressed = () => {
+                    if(artifact) {
+                        gsap.to(artifact.rotation, {
+                            x: artifact.rotation.x + Math.PI,
+                            y: artifact.rotation.y + Math.PI / 2,
+                            duration: 1,
+                            ease: "power4.out"
+                        });
+                    }
                 };
 
                 p.windowResized = () => {
@@ -267,15 +356,30 @@
             });
         };
 
-        // --- 3. GSAP UI ANIMATIONS ---
+        // --- 3. GSAP BRUTALIST ANIMATIONS ---
         const initAnimations = () => {
-            gsap.to("#nav-header", { opacity: 1, duration: 1.5, ease: "power2.out" });
-            gsap.to("#main-title", { y: 0, opacity: 1, duration: 1, delay: 0.5, ease: "power2.out" });
-            gsap.to("#sub-title", { y: 0, opacity: 1, duration: 1, delay: 0.7, ease: "power2.out" });
-            gsap.to("#footer", { opacity: 1, duration: 1, delay: 1, ease: "power2.out" });
+            // Glitchy fade in
+            gsap.fromTo("#nav-header", 
+                { opacity: 0, y: -20 }, 
+                { opacity: 1, y: 0, duration: 1, ease: "steps(5)" }
+            );
+            
+            gsap.fromTo("#main-title", 
+                { opacity: 0, scale: 0.9, filter: "blur(10px)" }, 
+                { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.5, delay: 0.2, ease: "power3.out" }
+            );
+
+            gsap.fromTo("#sub-title", 
+                { opacity: 0, x: -20 }, 
+                { opacity: 1, x: 0, duration: 0.5, delay: 1, ease: "steps(3)" }
+            );
+
+            gsap.fromTo("#footer", 
+                { opacity: 0 }, 
+                { opacity: 1, duration: 1, delay: 1.2, ease: "power1.inOut" }
+            );
         };
 
-        // Initialize everything when the DOM is ready
         window.onload = () => {
             initThreeJS();
             initP5();
