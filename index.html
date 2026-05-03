@@ -30,7 +30,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Light Mode Variables/Overrides */
         body.light-mode {
             background-color: #e8e8e8;
             color: #000;
@@ -69,7 +68,6 @@
         #three-container { z-index: 1; }
         #p5-container { z-index: 2; }
 
-        /* Scrollable Content Wrapper */
         #scroll-content {
             position: relative;
             z-index: 3;
@@ -79,12 +77,10 @@
             pointer-events: none; 
         }
 
-        /* Make interactive elements clickable */
         header, .theme-btn, .nav-links a, .wiki-box, .gallery-item {
             pointer-events: auto; 
         }
 
-        /* Hero Section */
         .hero {
             height: 100vh;
             display: flex;
@@ -102,7 +98,6 @@
 
         body.light-mode header { border-bottom: 1px solid rgba(0,0,0,0.2); }
 
-        /* Y2K 3D Title */
         .brand-name {
             font-family: 'Arial Black', sans-serif;
             font-size: 2.5rem;
@@ -110,23 +105,13 @@
             color: #fff;
             letter-spacing: -0.05em;
             text-transform: uppercase;
-            text-shadow: 
-                1px 1px 0 #555,
-                2px 2px 0 #444,
-                3px 3px 0 #333,
-                4px 4px 0 #222,
-                5px 5px 0 #111;
+            text-shadow: 1px 1px 0 #555, 2px 2px 0 #444, 3px 3px 0 #333, 4px 4px 0 #222, 5px 5px 0 #111;
             transition: all 0.3s ease;
         }
 
         body.light-mode .brand-name {
             color: #000;
-            text-shadow: 
-                1px 1px 0 #ccc,
-                2px 2px 0 #bbb,
-                3px 3px 0 #aaa,
-                4px 4px 0 #999,
-                5px 5px 0 #888;
+            text-shadow: 1px 1px 0 #ccc, 2px 2px 0 #bbb, 3px 3px 0 #aaa, 4px 4px 0 #999, 5px 5px 0 #888;
         }
 
         .header-controls {
@@ -200,7 +185,6 @@
             50% { opacity: 1; transform: translateY(10px); }
         }
 
-        /* Wikipedia / Y2K Info Section */
         .info-section {
             min-height: 100vh;
             padding: 5rem 2rem;
@@ -256,7 +240,6 @@
             text-align: left;
         }
 
-        /* Big Image Gallery Section */
         .gallery-section {
             padding: 2rem;
             display: flex;
@@ -294,7 +277,7 @@
             position: absolute;
             bottom: 2rem;
             left: 2rem;
-            background: currentColor;
+            background: #fff;
             color: #000;
             padding: 0.5rem 1rem;
             font-weight: bold;
@@ -302,7 +285,10 @@
             text-transform: uppercase;
         }
 
-        body.light-mode .gallery-caption { color: #fff; }
+        body.light-mode .gallery-caption { 
+            background: #000;
+            color: #fff;
+        }
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
@@ -311,7 +297,16 @@
             .nav-links { gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; font-size: 0.7rem; }
             .info-section { flex-direction: column; padding: 2rem 1rem; }
             .wiki-box { width: 100%; }
-            .gallery-item { height: 50vh; }
+            
+            /* Full Width & Height Mobile Gallery */
+            .gallery-section { padding: 0; gap: 0; }
+            .gallery-item {
+                width: 100vw;
+                height: 90vh;
+                border-left: none;
+                border-right: none;
+                border-bottom: 1px solid currentColor;
+            }
         }
     </style>
 </head>
@@ -322,7 +317,6 @@
     <div id="p5-container"></div>
 
     <div id="scroll-content">
-        <!-- Section 1: Hero -->
         <section class="hero">
             <header id="nav-header">
                 <div class="brand-name">INVOXEA</div>
@@ -343,33 +337,16 @@
             </div>
         </section>
 
-        <!-- Section 2: Y2K / Wikipedia Dense Info -->
         <section class="info-section">
             <div class="wiki-box">
                 <div class="wiki-title">INVOXEA_MANIFESTO.TXT</div>
-                <p class="wiki-text">
-                    Founded at the intersection of spatial web logic and physical garment construction. Invoxea operates as a dual-entity platform, merging high-end textile collections with <a href="#" class="wiki-link">immutable digital works</a>.
-                </p>
-                <p class="wiki-text">
-                    The brand logic relies on continuous structural iteration, taking aesthetic cues from early network architecture and brutalist spatial design.
-                </p>
+                <p class="wiki-text">Founded at the intersection of spatial web logic and physical garment construction. Invoxea operates as a dual-entity platform, merging high-end textile collections with <a href="#" class="wiki-link">immutable digital works</a>.</p>
+                <p class="wiki-text">The brand logic relies on continuous structural iteration, taking aesthetic cues from early network architecture and brutalist spatial design.</p>
                 <table class="wiki-table">
-                    <tr>
-                        <th>PARAMETER</th>
-                        <th>VALUE</th>
-                    </tr>
-                    <tr>
-                        <td>ESTABLISHED</td>
-                        <td>2026</td>
-                    </tr>
-                    <tr>
-                        <td>PROTOCOL</td>
-                        <td>PHYSICAL / DIGITAL / SPATIAL</td>
-                    </tr>
-                    <tr>
-                        <td>HOST</td>
-                        <td>MELBOURNE_SERVER_01</td>
-                    </tr>
+                    <tr><th>PARAMETER</th><th>VALUE</th></tr>
+                    <tr><td>ESTABLISHED</td><td>2026</td></tr>
+                    <tr><td>PROTOCOL</td><td>PHYSICAL / DIGITAL / SPATIAL</td></tr>
+                    <tr><td>HOST</td><td>MELBOURNE_SERVER_01</td></tr>
                 </table>
             </div>
 
@@ -382,7 +359,6 @@
             </div>
         </section>
 
-        <!-- Section 3: Immersive Scroll Gallery -->
         <section class="gallery-section">
             <div class="gallery-item">
                 <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop" alt="Digital Artifact">
@@ -402,18 +378,13 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- 1. LIGHT/DARK MODE TOGGLE ---
-        const themeToggle = document.getElementById('theme-toggle');
         let isLightMode = false;
+        let material, wireMaterial;
 
-        themeToggle.addEventListener('click', () => {
-            isLightMode = !isLightMode;
-            document.body.classList.toggle('light-mode');
-            themeToggle.innerText = isLightMode ? '☾' : '☼';
-        });
-
-        // --- 2. THREE.JS 3D ENVIRONMENT ---
-        let artifact, wireframe, pointLight1, pointLight2;
+        // --- 1. THREE.JS 3D ENVIRONMENT & MORPHING ---
+        let artifact, wireframe;
+        let currentGeoIndex = 0;
+        
         const initThreeJS = () => {
             const container = document.getElementById('three-container');
             const scene = new THREE.Scene();
@@ -426,49 +397,75 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            const geometry = new THREE.TorusKnotGeometry(1.5, 0.4, 128, 32);
-            const material = new THREE.MeshStandardMaterial({ 
+            // Array of minimal 3D geometries to morph through
+            const geometries = [
+                new THREE.TorusKnotGeometry(1.5, 0.4, 128, 32),
+                new THREE.IcosahedronGeometry(1.8, 1),
+                new THREE.OctahedronGeometry(1.8, 0),
+                new THREE.RingGeometry(0.8, 2, 32)
+            ];
+
+            material = new THREE.MeshStandardMaterial({ 
                 color: 0xaaaaaa, 
                 roughness: 0.1,
                 metalness: 1.0,
             });
             
-            artifact = new THREE.Mesh(geometry, material);
+            artifact = new THREE.Mesh(geometries[0], material);
             scene.add(artifact);
 
-            const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 });
-            wireframe = new THREE.Mesh(geometry, wireMaterial);
+            wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 });
+            wireframe = new THREE.Mesh(geometries[0], wireMaterial);
             wireframe.scale.set(1.02, 1.02, 1.02);
             artifact.add(wireframe);
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
             
-            pointLight1 = new THREE.PointLight(0xff003c, 5, 50); 
+            const pointLight1 = new THREE.PointLight(0xff003c, 5, 50); 
             pointLight1.position.set(5, 5, 5);
             scene.add(pointLight1);
 
-            pointLight2 = new THREE.PointLight(0x00f0ff, 5, 50); 
+            const pointLight2 = new THREE.PointLight(0x00f0ff, 5, 50); 
             pointLight2.position.set(-5, -5, 2);
             scene.add(pointLight2);
 
-            if (window.innerWidth < 768) {
-                artifact.scale.set(0.6, 0.6, 0.6);
-            }
+            let baseScale = window.innerWidth < 768 ? 0.6 : 1;
+            artifact.scale.set(baseScale, baseScale, baseScale);
 
-            // Sync 3D object rotation/position to scroll depth
+            // Sync 3D morphing and position to scroll depth
             ScrollTrigger.create({
                 trigger: "#scroll-content",
                 start: "top top",
                 end: "bottom bottom",
                 onUpdate: (self) => {
+                    // Geometry swap logic based on scroll progress (0 to 3)
+                    let newIndex = Math.floor(self.progress * 3.99); 
+                    if(newIndex !== currentGeoIndex) {
+                        currentGeoIndex = newIndex;
+                        
+                        // Shrink, swap, and grow animation
+                        gsap.to(artifact.scale, {
+                            x: 0, y: 0, z: 0, 
+                            duration: 0.2, 
+                            onComplete: () => {
+                                artifact.geometry = geometries[currentGeoIndex];
+                                wireframe.geometry = geometries[currentGeoIndex];
+                                gsap.to(artifact.scale, {
+                                    x: baseScale, y: baseScale, z: baseScale, 
+                                    duration: 0.6, ease: "back.out(1.5)"
+                                });
+                            }
+                        });
+                    }
+
                     gsap.to(artifact.rotation, {
                         z: self.progress * Math.PI * 4,
                         duration: 0.5,
                         overwrite: "auto"
                     });
                     gsap.to(artifact.position, {
-                        y: self.progress * 2, // Moves slightly up as you scroll down
+                        y: self.progress * 2,
                         duration: 0.5,
                         overwrite: "auto"
                     });
@@ -479,14 +476,8 @@
             const animate = () => {
                 requestAnimationFrame(animate);
                 const time = clock.getElapsedTime();
-                
-                // Base idle animation
                 artifact.rotation.x += Math.sin(time) * 0.005;
                 artifact.rotation.y += 0.01;
-
-                // Adjust wireframe color based on theme
-                wireMaterial.color.setHex(isLightMode ? 0x000000 : 0xffffff);
-
                 renderer.render(scene, camera);
             };
             animate();
@@ -495,9 +486,33 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                artifact.scale.setScalar(window.innerWidth < 768 ? 0.6 : 1);
+                baseScale = window.innerWidth < 768 ? 0.6 : 1;
+                artifact.scale.setScalar(baseScale);
             });
         };
+
+        // --- 2. THEME TOGGLE LOGIC ---
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode');
+            themeToggle.innerText = isLightMode ? '☾' : '☼';
+
+            // Increase 3D contrast and definition in light mode
+            if(material && wireMaterial) {
+                if (isLightMode) {
+                    material.color.setHex(0x333333); // Darker chrome body
+                    material.roughness = 0.4;
+                    wireMaterial.color.setHex(0x000000); // Black wireframe
+                    wireMaterial.opacity = 0.4; // Higher visibility
+                } else {
+                    material.color.setHex(0xaaaaaa); // Standard chrome
+                    material.roughness = 0.1;
+                    wireMaterial.color.setHex(0xffffff); // White wireframe
+                    wireMaterial.opacity = 0.15;
+                }
+            }
+        });
 
         // --- 3. P5.JS INTERACTIVE HUD ---
         const initP5 = () => {
@@ -512,7 +527,6 @@
 
                 p.draw = () => {
                     p.clear();
-                    
                     let mx = p.mouseX || p.width / 2;
                     let my = p.mouseY || p.height / 2;
                     let strokeColor = isLightMode ? p.color(0, 50) : p.color(255, 50);
@@ -536,7 +550,6 @@
                     p.line(mx + 5, my, mx + 20, my);
                     p.line(mx, my - 20, mx, my - 5);
                     p.line(mx, my + 5, mx, my + 20);
-                    
                     p.fill(solidColor);
                     p.rect(mx - 1, my - 1, 2, 2);
                 };
@@ -546,15 +559,12 @@
                         gsap.to(artifact.rotation, {
                             x: artifact.rotation.x + Math.PI,
                             y: artifact.rotation.y + Math.PI / 2,
-                            duration: 1,
-                            ease: "power4.out"
+                            duration: 1, ease: "power4.out"
                         });
                     }
                 };
 
-                p.windowResized = () => {
-                    p.resizeCanvas(p.windowWidth, p.windowHeight);
-                };
+                p.windowResized = () => p.resizeCanvas(p.windowWidth, p.windowHeight);
             });
         };
 
@@ -563,7 +573,6 @@
             gsap.fromTo("#nav-header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "steps(5)" });
             gsap.fromTo("#main-title", { opacity: 0, scale: 0.9, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.5, delay: 0.2, ease: "power3.out" });
             
-            // Animate wiki boxes on scroll
             gsap.utils.toArray('.wiki-box').forEach(box => {
                 gsap.fromTo(box, 
                     { opacity: 0, x: -50 }, 
